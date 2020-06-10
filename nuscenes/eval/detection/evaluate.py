@@ -77,7 +77,7 @@ class NuScenesEval:
         if verbose:
             print('Initializing nuScenes evaluation')
         self.pred_boxes, self.meta = load_prediction(self.result_path, self.cfg.max_boxes_per_sample, verbose=verbose)
-        self.gt_boxes = load_gt(self.nusc, self.eval_set, verbose=verbose)
+        self.gt_boxes = load_gt(self.nusc, self.result_path, self.eval_set, verbose=verbose)
 
         assert set(self.pred_boxes.sample_tokens) == set(self.gt_boxes.sample_tokens), \
             "Samples in split doesn't match samples in predictions."
