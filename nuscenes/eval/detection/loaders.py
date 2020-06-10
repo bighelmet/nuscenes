@@ -41,7 +41,7 @@ def load_prediction(result_path: str, max_boxes_per_sample: int, verbose: bool =
     return all_results, meta
 
 
-def load_gt(nusc, eval_split: str, verbose: bool = False) -> EvalBoxes:
+def load_gt(nusc, result_path: str, eval_split: str, verbose: bool = False) -> EvalBoxes:
     """ Loads ground truth boxes from DB. """
 
     # Init.
@@ -76,13 +76,17 @@ def load_gt(nusc, eval_split: str, verbose: bool = False) -> EvalBoxes:
         assert len(nusc.sample_annotation) > 0, \
             'Error: You are trying to evaluate on the test set but you do not have the annotations!'
 
-    sample_tokens = []
-    for sample_token in sample_tokens_all:
-        scene_token = nusc.get('sample', sample_token)['scene_token']
-        scene_record = nusc.get('scene', scene_token)
-        if scene_record['name'] in splits[eval_split]:
-            sample_tokens.append(sample_token)
-
+#     sample_tokens = []
+#     for sample_token in sample_tokens_all:
+#         scene_token = nusc.get('sample', sample_token)['scene_token']
+#         scene_record = nusc.get('scene', scene_token)
+#         if scene_record['name'] in splits[eval_split]:
+#             sample_tokens.append(sample_token)
+    with open(result_path) as f:
+        data = json.load(f)
+    all_results = EvalBoxes.deserialize(data['results'])    
+    sample_tokens = all_results.sample_tokens
+    
     all_annotations = EvalBoxes()
 
     # Load annotations and filter predictions and annotations.
